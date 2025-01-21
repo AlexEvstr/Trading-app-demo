@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class CandleChart : MonoBehaviour
 {
@@ -23,10 +24,12 @@ public class CandleChart : MonoBehaviour
     private float lowPrice = 200f; // Минимальная цена
     private float previousClosePrice = 200f; // Цена закрытия предыдущей свечи
     private float elapsedTime; // Время с момента создания текущей свечи
-    private float nextCandleXPosition = 0f; // Позиция следующей свечи по X
 
     private float minPrice = 180f; // Минимальная возможная цена
     private float maxPrice = 220f; // Максимальная возможная цена
+
+    private List<RectTransform> candleBodies = new List<RectTransform>(); // Список тел свечей
+    private List<RectTransform> candleShadows = new List<RectTransform>(); // Список теней свечей
 
     void Start()
     {
@@ -47,7 +50,8 @@ public class CandleChart : MonoBehaviour
         if (elapsedTime >= candleLifetime)
         {
             FixCurrentCandle();
-            InitializeCandle();
+            ShiftAllCandlesLeft(); // Сдвигаем все свечи влево
+            InitializeCandle(); // Создаем новую свечу
         }
     }
 
@@ -112,8 +116,8 @@ public class CandleChart : MonoBehaviour
         Image bodyImage = body.AddComponent<Image>();
         bodyImage.color = Color.green;
 
-        // Настройка начальной позиции свечи
-        Vector2 candlePosition = new Vector2(nextCandleXPosition, 0);
+        // Настройка начальной позиции свечи (в центре области отображения)
+        Vector2 candlePosition = new Vector2(0, 0);
         currentShadowRect.anchoredPosition = candlePosition;
         currentBodyRect.anchoredPosition = candlePosition;
 
@@ -127,8 +131,9 @@ public class CandleChart : MonoBehaviour
         currentBodyRect.anchorMin = currentBodyRect.anchorMax = new Vector2(0.5f, 0f);
         currentBodyRect.pivot = new Vector2(0.5f, 0f);
 
-        // Обновляем позицию для следующей свечи
-        nextCandleXPosition += candleSpacing;
+        // Добавляем свечу в списки
+        candleBodies.Add(currentBodyRect);
+        candleShadows.Add(currentShadowRect);
     }
 
     void FixCurrentCandle()
@@ -141,6 +146,16 @@ public class CandleChart : MonoBehaviour
         currentShadowRect = null;
     }
 
+    void ShiftAllCandlesLeft()
+    {
+        // Сдвигаем все свечи влево на candleSpacing
+        for (int i = 0; i < candleBodies.Count; i++)
+        {
+            candleBodies[i].anchoredPosition += new Vector2(-candleSpacing, 0);
+            candleShadows[i].anchoredPosition += new Vector2(-candleSpacing, 0);
+        }
+    }
+
     void UpdateCandleDisplay()
     {
         float chartHeight = grid.rect.height;
@@ -151,19 +166,19 @@ public class CandleChart : MonoBehaviour
         float shadowPosition = (lowPrice - minPrice) / chartRange * chartHeight;
 
         currentShadowRect.sizeDelta = new Vector2(shadowWidth, shadowHeight);
-        currentShadowRect.anchoredPosition = new Vector2(nextCandleXPosition - candleSpacing, shadowPosition);
+        currentShadowRect.anchoredPosition = new Vector2(0, shadowPosition);
 
         // Обновляем тело
         float bodyHeight = Mathf.Abs(currentPrice - openPrice) / chartRange * chartHeight;
         float bodyPosition = (Mathf.Min(openPrice, currentPrice) - minPrice) / chartRange * chartHeight;
 
         currentBodyRect.sizeDelta = new Vector2(candleWidth, bodyHeight);
-        currentBodyRect.anchoredPosition = new Vector2(nextCandleXPosition - candleSpacing, bodyPosition);
+        currentBodyRect.anchoredPosition = new Vector2(0, bodyPosition);
 
         // Определяем цвет свечи:
         // Если это первая свеча, отталкиваемся от 200, иначе от предыдущей цены закрытия
         float colorThreshold = previousClosePrice;
-        if (nextCandleXPosition <= candleSpacing) // Если первая свеча
+        if (candleBodies.Count <= 1) // Если первая свеча
         {
             colorThreshold = 200f;
         }
