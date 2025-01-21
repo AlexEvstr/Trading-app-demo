@@ -1432,9 +1432,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adee086b6d9f34c5591c0e9d86dc2e03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  candleLifetime: 15
+  candleLifetime: 5
   candleWidth: 40
   shadowWidth: 15
+  candleSpacing: 50
+  priceChangeSpeed: 5
   grid: {fileID: 43710035}
   priceText: {fileID: 938878393}
 --- !u!1 &1459544035
