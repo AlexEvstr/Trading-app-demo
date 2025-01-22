@@ -18,7 +18,7 @@ public class CandleChart : MonoBehaviour
     private RectTransform currentBodyRect; // Тело текущей свечи
     private RectTransform currentShadowRect; // Тень текущей свечи
     private float openPrice = 200f; // Цена открытия текущей свечи
-    private float currentPrice = 200f; // Текущая цена
+    public float currentPrice = 200f; // Текущая цена
     private float targetPrice; // Целевая цена
     private float highPrice = 200f; // Максимальная цена
     private float lowPrice = 200f; // Минимальная цена
