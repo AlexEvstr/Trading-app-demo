@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class SingleCandle : MonoBehaviour
 {
     [Header("Settings")]
+    [SerializeField] private RectTransform _line;
     public Dropdown timeDropdown;
     public float candleLifetime = 5f; // Время жизни одной свечи
     public float candleWidth = 25; // Ширина тела свечи
@@ -35,6 +36,7 @@ public class SingleCandle : MonoBehaviour
     void Awake()
     {
         InitializeCandle();
+        UpdateLinePosition();
         timeDropdown.onValueChanged.AddListener(OnTimeDropdownChanged);
     }
 
@@ -91,6 +93,22 @@ public class SingleCandle : MonoBehaviour
         // Создаем новую свечу
         CreateCandle();
     }
+
+    private void UpdateLinePosition()
+    {
+        if (_line != null)
+        {
+            float chartHeight = grid.rect.height;
+            float chartRange = maxPrice - minPrice;
+
+            // Вычисляем позицию линии по текущей цене
+            float pricePositionY = (currentPrice - minPrice) / chartRange * chartHeight;
+
+            // Устанавливаем линию на правильную высоту
+            _line.anchoredPosition = new Vector2(_line.anchoredPosition.x, pricePositionY-600);
+        }
+    }
+
 
     void MoveTowardsTargetPrice()
     {
@@ -195,6 +213,7 @@ public class SingleCandle : MonoBehaviour
 
         currentBodyRect.sizeDelta = new Vector2(candleWidth, bodyHeight);
         currentBodyRect.anchoredPosition = new Vector2(0, bodyPosition);
+        
 
         // Определяем цвет свечи:
         // Если это первая свеча, отталкиваемся от 200, иначе от предыдущей цены закрытия
@@ -207,5 +226,7 @@ public class SingleCandle : MonoBehaviour
         Color candleColor = currentPrice > colorThreshold ? Color.green : Color.red;
         currentBodyRect.GetComponent<Image>().color = candleColor;
         currentShadowRect.GetComponent<Image>().color = candleColor;
+
+        UpdateLinePosition();
     }
 }

@@ -138,12 +138,12 @@ public class TradingManager : MonoBehaviour
         if (isWin)
         {
             cash += selectedAmount + profit;
-            ShowResultWindow("You Win!", profit);
+            ShowResultWindow("You win", profit);
         }
         else
         {
             cash -= selectedAmount + profit;
-            ShowResultWindow("You Lose!", -profit);
+            ShowResultWindow("You lose", -profit);
         }
         PlayerPrefs.SetFloat("CashTotal", cash);
         _totalCashBalance.text = cash.ToString();
@@ -161,7 +161,6 @@ public class TradingManager : MonoBehaviour
     {
         // Проверяем, выбраны ли ставка и множитель
         bool isValid = selectedAmount > 0 && multiplier > 0;
-        Debug.Log($"selectedAmount: {selectedAmount}, multiplier:{multiplier}");
         // Включаем/отключаем кнопки Sell и Buy в окне подтверждения
         sellButton.interactable = isValid;
         buyButton.interactable = isValid;
