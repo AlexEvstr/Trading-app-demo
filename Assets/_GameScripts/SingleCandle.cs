@@ -2,13 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class CandleChart : MonoBehaviour
+public class SingleCandle : MonoBehaviour
 {
     [Header("Settings")]
-    public float candleLifetime = 15f; // Время жизни одной свечи
-    public float candleWidth = 40f; // Ширина тела свечи
-    public float shadowWidth = 15f; // Ширина тени свечи
-    public float candleSpacing = 50f; // Расстояние между свечами по оси X
+    public Dropdown timeDropdown;
+    public float candleLifetime = 5f; // Время жизни одной свечи
+    public float candleWidth = 25; // Ширина тела свечи
+    public float shadowWidth = 5; // Ширина тени свечи
+    public float candleSpacing = 35; // Расстояние между свечами по оси X
     public float priceChangeSpeed = 5f; // Скорость изменения цены
 
     [Header("References")]
@@ -31,9 +32,10 @@ public class CandleChart : MonoBehaviour
     private List<RectTransform> candleBodies = new List<RectTransform>(); // Список тел свечей
     private List<RectTransform> candleShadows = new List<RectTransform>(); // Список теней свечей
 
-    void Start()
+    void Awake()
     {
         InitializeCandle();
+        timeDropdown.onValueChanged.AddListener(OnTimeDropdownChanged);
     }
 
     void Update()
@@ -54,6 +56,25 @@ public class CandleChart : MonoBehaviour
             InitializeCandle(); // Создаем новую свечу
         }
     }
+
+    public void OnTimeDropdownChanged(int index)
+    {
+        Debug.Log($"Index received: {index}");
+        switch (index)
+        {
+            case 0:
+                candleLifetime = 5f;
+                break;
+            case 1:
+                candleLifetime = 10f;
+                break;
+            case 2:
+                candleLifetime = 15f;
+                break;
+        }
+        Debug.Log($"candleLifetime updated to: {candleLifetime}");
+    }
+
 
     void InitializeCandle()
     {

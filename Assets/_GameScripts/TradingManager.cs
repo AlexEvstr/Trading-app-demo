@@ -23,7 +23,6 @@ public class TradingManager : MonoBehaviour
     public Button[] sellMultiplierButtons; // Кнопки с множителями для Sell
 
     [Header("Settings")]
-    public float initialCash = 10000f; // Начальный баланс
     private float multiplier = 0f; // Выбранный множитель (1x, 5x и т.д.)
     private float selectedAmount = 0f; // Выбранная сумма
     private float cash; // Текущий баланс
@@ -41,10 +40,13 @@ public class TradingManager : MonoBehaviour
 
     public Color selectedColor = Color.yellow; // Цвет выбранной кнопки
     public Color defaultColor = Color.white;  // Цвет кнопок по умолчанию
+    [SerializeField] private Text _totalCashBalance;
+    [SerializeField] private SingleCandle _singleCandle;
 
     void Start()
     {
-        cash = initialCash;
+        cash = PlayerPrefs.GetFloat("CashTotal", 10000);
+        _totalCashBalance.text = cash.ToString();
         UpdateCashDisplay();
         CloseAllWindows();
         InitializeButtons();
@@ -131,17 +133,20 @@ public class TradingManager : MonoBehaviour
 
         // Проверяем результат сделки
         bool isWin = (isBuy && closePrice > entryPrice) || (!isBuy && closePrice < entryPrice);
-
+        float profit = selectedAmount * multiplier;
+        cash = PlayerPrefs.GetFloat("CashTotal", 10000);
         if (isWin)
         {
-            float profit = selectedAmount * multiplier;
             cash += selectedAmount + profit;
             ShowResultWindow("You Win!", profit);
         }
         else
         {
-            ShowResultWindow("You Lose!", -selectedAmount);
+            cash -= selectedAmount + profit;
+            ShowResultWindow("You Lose!", -profit);
         }
+        PlayerPrefs.SetFloat("CashTotal", cash);
+        _totalCashBalance.text = cash.ToString();
 
         UpdateCashDisplay();
 
@@ -166,7 +171,6 @@ public class TradingManager : MonoBehaviour
     public void ConfirmTrade()
     {
         entryPrice = GetCurrentPrice(); // Фиксируем текущую цену
-        cash -= selectedAmount;         // Списываем ставку
         UpdateCashDisplay();            // Обновляем баланс
 
         // Закрываем окно подтверждения
@@ -184,34 +188,10 @@ public class TradingManager : MonoBehaviour
         CloseAllWindows();
     }
 
-    private void CompleteTrade()
-    {
-        closePrice = GetCurrentPrice();
-        bool isWin = (isBuy && closePrice > entryPrice) || (!isBuy && closePrice < entryPrice);
-
-        if (isWin)
-        {
-            float profit = selectedAmount * multiplier;
-            cash += selectedAmount + profit;
-            ShowResultWindow("You Win!", profit);
-        }
-        else
-        {
-            ShowResultWindow("You Lose!", -selectedAmount);
-        }
-
-        UpdateCashDisplay();
-
-        // Возвращаем главные кнопки и отключаем кнопку закрытия сделки
-        mainSellButton.gameObject.SetActive(true);
-        mainBuyButton.gameObject.SetActive(true);
-        closeDealButton.gameObject.SetActive(false);
-    }
-
     private void ShowResultWindow(string result, float amountChange)
     {
         resultWindow.SetActive(true);
-        resultText.text = $"{result}\nChange: {(amountChange > 0 ? "+" : "")}{amountChange:F2}";
+        resultText.text = $"{result}\n{(amountChange > 0 ? "+" : "")}{amountChange:F2}";
     }
 
     private void CloseAllWindows()
@@ -245,7 +225,7 @@ public class TradingManager : MonoBehaviour
     private float GetCurrentPrice()
     {
         // Получить текущую цену из CandleChart
-        return FindObjectOfType<CandleChart>().currentPrice;
+        return _singleCandle.currentPrice;
     }
 
     private void InitializeButtons()
