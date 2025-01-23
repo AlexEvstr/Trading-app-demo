@@ -16,6 +16,7 @@ public class SingleCandle : MonoBehaviour
     [Header("References")]
     public RectTransform grid; // Контейнер для графика
     public Text priceText; // Текст текущей цены
+    public Text priceOnLineText; // Текст текущей цены
 
     private RectTransform currentBodyRect; // Тело текущей свечи
     private RectTransform currentShadowRect; // Тень текущей свечи
@@ -127,6 +128,7 @@ public class SingleCandle : MonoBehaviour
 
         // Обновляем текст текущей цены
         priceText.text = currentPrice.ToString("F2");
+        priceOnLineText.text = currentPrice.ToString("F2");
     }
 
     void AssignNewTargetPrice()
