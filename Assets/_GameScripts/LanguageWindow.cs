@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LanguageWindow : MonoBehaviour
 {
@@ -9,12 +10,37 @@ public class LanguageWindow : MonoBehaviour
     [SerializeField] private GameObject _languageWindow;
     [SerializeField] private GameObject[] _tutorialWindows;
 
+    private SettingsWindow _settingsWindow;
+
+    [SerializeField] private Image[] _sellBtns;
+    [SerializeField] private Image[] _buyBtns;
+    [SerializeField] private Image[] _closeBtns;
+    [SerializeField] private Sprite[] _sellLanguege;
+    [SerializeField] private Sprite[] _buyLanguege;
+    [SerializeField] private Sprite[] _closeLanguege;
+
+
     private void Start()
     {
+        _settingsWindow = GetComponent<SettingsWindow>();
+        int languageIndex = PlayerPrefs.GetInt("SelectedLanguage", 0);
+
         if (PlayerPrefs.GetString("FirstEnterGame", "") != "")
         {
-            int languageIndex = PlayerPrefs.GetInt("SelectedLanguage", 0);
             SelectNewLanguage(languageIndex);
+        }
+
+        foreach (var item in _closeBtns)
+        {
+            item.sprite = _closeLanguege[languageIndex];
+        }
+        foreach (var item in _sellBtns)
+        {
+            item.sprite = _sellLanguege[languageIndex];
+        }
+        foreach (var item in _buyBtns)
+        {
+            item.sprite = _buyLanguege[languageIndex];
         }
     }
 
@@ -36,12 +62,30 @@ public class LanguageWindow : MonoBehaviour
         _nextBtns[index].SetActive(true);
         _languages[index].SetActive(true);
         PlayerPrefs.SetInt("SelectedLanguage", index);
+
+        foreach (var item in _closeBtns)
+        {
+            item.sprite = _closeLanguege[index];
+        }
+        foreach (var item in _sellBtns)
+        {
+            item.sprite = _sellLanguege[index];
+        }
+        foreach (var item in _buyBtns)
+        {
+            item.sprite = _buyLanguege[index];
+        }
     }
 
     public void NextBtn()
     {
         int languageIndex = PlayerPrefs.GetInt("SelectedLanguage", 0);
         _languageWindow.SetActive(false);
-        _tutorialWindows[languageIndex].SetActive(true);
+        if (PlayerPrefs.GetString("FirstEnterGame", "") == "")
+            _tutorialWindows[languageIndex].SetActive(true);
+        else
+        {
+            _settingsWindow.OpenSettingsWindow();
+        }
     }
 }

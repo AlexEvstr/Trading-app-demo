@@ -8,8 +8,15 @@ public class TutorialWindow : MonoBehaviour
     public void OpenArticles()
     {
         int languageIndex = PlayerPrefs.GetInt("SelectedLanguage", 0);
+        _tutorialWindows[languageIndex].SetActive(false);
         _articles[languageIndex].SetActive(true);
         PlayerPrefs.SetString("FirstEnterGame", "Was");
+    }
+
+    public void CloseArticles()
+    {
+        int languageIndex = PlayerPrefs.GetInt("SelectedLanguage", 0);
+        _articles[languageIndex].SetActive(false);
     }
 
     public void CloseTutorial()

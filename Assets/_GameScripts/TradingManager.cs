@@ -1,3 +1,4 @@
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -135,15 +136,26 @@ public class TradingManager : MonoBehaviour
         bool isWin = (isBuy && closePrice > entryPrice) || (!isBuy && closePrice < entryPrice);
         float profit = selectedAmount * multiplier;
         cash = PlayerPrefs.GetFloat("CashTotal", 10000);
+        int languageIndex = PlayerPrefs.GetInt("SelectedLanguage", 0);
         if (isWin)
         {
             cash += selectedAmount + profit;
-            ShowResultWindow("You win", profit);
+            if (languageIndex == 0)
+                ShowResultWindow("You win", profit);
+            else if (languageIndex == 1)
+                ShowResultWindow("Du gewinnst", profit);
+            else if (languageIndex == 2)
+                ShowResultWindow("Você ganha", profit);
         }
         else
         {
             cash -= selectedAmount + profit;
-            ShowResultWindow("You lose", -profit);
+            if (languageIndex == 0)
+                ShowResultWindow("You lose", -profit);
+            else if (languageIndex == 1)
+                ShowResultWindow("Du verlierst", -profit);
+            else if (languageIndex == 1)
+                ShowResultWindow("Você perde", -profit);
         }
         PlayerPrefs.SetFloat("CashTotal", cash);
         _totalCashBalance.text = cash.ToString();
