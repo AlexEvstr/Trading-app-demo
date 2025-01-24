@@ -19,6 +19,9 @@ public class LanguageWindow : MonoBehaviour
     [SerializeField] private Sprite[] _buyLanguege;
     [SerializeField] private Sprite[] _closeLanguege;
 
+    [SerializeField] private Text[] _yourCashText;
+    [SerializeField] private string[] _yourCashLanguages;
+
 
     private void Start()
     {
@@ -74,6 +77,10 @@ public class LanguageWindow : MonoBehaviour
         foreach (var item in _buyBtns)
         {
             item.sprite = _buyLanguege[index];
+        }
+        foreach (var item in _yourCashText)
+        {
+            item.text = _yourCashLanguages[index];
         }
     }
 
