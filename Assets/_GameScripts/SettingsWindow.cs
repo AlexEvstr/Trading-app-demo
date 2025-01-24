@@ -10,6 +10,7 @@ public class SettingsWindow : MonoBehaviour
     [SerializeField] private GameObject _closeLanguageBtn;
     private string email = "alexdrugev@me.com";
     [SerializeField] private GameObject[] _settingsWindows;
+    [SerializeField] private GameObject _privacyWindow;
 
     public void OpenLanuageWindow()
     {
@@ -24,7 +25,12 @@ public class SettingsWindow : MonoBehaviour
 
     public void OpenPrivacyPolicy()
     {
-        Application.OpenURL("http://google.com/");
+        _privacyWindow.SetActive(true);
+    }
+
+    public void ClosePrivacyPolicy()
+    {
+        _privacyWindow.SetActive(false);
     }
 
     public void WriteUsButton()

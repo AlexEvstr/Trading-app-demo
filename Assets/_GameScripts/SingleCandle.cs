@@ -11,7 +11,7 @@ public class SingleCandle : MonoBehaviour
     public float candleWidth = 25; // Ширина тела свечи
     public float shadowWidth = 5; // Ширина тени свечи
     public float candleSpacing = 35; // Расстояние между свечами по оси X
-    public float priceChangeSpeed = 5f; // Скорость изменения цены
+    private float priceChangeSpeed = 2.5f; // Скорость изменения цены
 
     [Header("References")]
     public RectTransform grid; // Контейнер для графика
